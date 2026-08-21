@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <title>Summary with Gemini の設定</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <h1>Summary with Gemini の設定</h1>
+
+  <form id="form">
+    <div class="field">
+      <label class="check">
+        <input type="checkbox" id="autoRun" />
+        <span>パネルを開いたら自動で要約する</span>
+      </label>
+      <p class="hint">オフにすると、左上の「要約する」を押したときだけ要約します。</p>
+    </div>
+
+    <div class="field">
+      <label for="language">要約の言語</label>
+      <select id="language">
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+        <option value="zh">中文（简体）</option>
+      </select>
+      <p class="hint" id="languageHint"></p>
+    </div>
+
+    <div class="field">
+      <label for="length">要約の長さ</label>
+      <select id="length">
+        <option value="short">短い</option>
+        <option value="medium">ふつう</option>
+        <option value="long">長い</option>
+      </select>
+      <p class="hint">1回の要約で出力する分量。</p>
+    </div>
+
+    <div class="field">
+      <label for="type">要約の形式</label>
+      <select id="type">
+        <option value="key-points">箇条書き（要点）</option>
+        <option value="tldr">TL;DR（短いまとめ）</option>
+        <option value="teaser">ティザー（興味を引く導入）</option>
+        <option value="headline">見出し（1行）</option>
+      </select>
+      <p class="hint">いずれの形式でも、文末は体言止めに整形されます。</p>
+    </div>
+  </form>
+
+  <p class="saved" id="saved" hidden>保存しました</p>
+
+  <script src="options.js" type="module"></script>
+</body>
+</html>

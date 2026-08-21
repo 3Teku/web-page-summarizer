@@ -1,0 +1,10 @@
+# OS / エディタ
+Thumbs.db
+Desktop.ini
+.DS_Store
+.vscode/
+
+# 配布用パッケージ
+*.zip
+*.crx
+*.pem

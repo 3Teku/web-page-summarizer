@@ -1,0 +1,65 @@
+:root {
+  --bg: #ffffff;
+  --fg: #1f2328;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --accent: #2563eb;
+  --ok: #16a34a;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17181c;
+    --fg: #e8eaed;
+    --muted: #9aa0a6;
+    --line: #2e3035;
+    --accent: #4c8dff;
+    --ok: #4ade80;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-width: 320px;
+  padding: 18px 20px 20px;
+  background: var(--bg);
+  color: var(--fg);
+  font: 14px/1.7 system-ui, -apple-system, "Segoe UI", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+}
+h1 {
+  margin: 0 0 16px;
+  padding-bottom: 10px;
+  font-size: 15px;
+  font-weight: 650;
+  border-bottom: 1px solid var(--line);
+}
+.field { margin-bottom: 18px; }
+.field label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 600; }
+select {
+  width: 100%;
+  padding: 7px 8px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.check input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.hint { margin: 5px 0 0; font-size: 11px; color: var(--muted); }
+.saved { margin: 0; font-size: 12px; color: var(--ok); }

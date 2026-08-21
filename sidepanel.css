@@ -1,0 +1,90 @@
+:root {
+  --bg: #ffffff;
+  --fg: #1f2328;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --accent: #2563eb;
+  --accent-fg: #ffffff;
+  --card: #f7f8fa;
+  --err: #b42318;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17181c;
+    --fg: #e8eaed;
+    --muted: #9aa0a6;
+    --line: #2e3035;
+    --accent: #4c8dff;
+    --accent-fg: #0b0c0f;
+    --card: #1f2126;
+    --err: #ff8a80;
+  }
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--fg);
+  font: 14px/1.7 system-ui, -apple-system, "Segoe UI", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+}
+
+/* ヘッダー: 左端に要約ボタン、右端に設定ボタン */
+.head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+}
+button.primary {
+  padding: 7px 16px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--accent-fg);
+  background: var(--accent);
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+button.primary:disabled { opacity: .55; cursor: default; }
+.icon-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px; height: 30px;
+  padding: 0;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.icon-btn:hover { color: var(--fg); background: var(--card); }
+
+#main { flex: 1 1 auto; overflow-y: auto; padding: 12px 14px; }
+.page-meta {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 8px; padding: 8px 10px; margin-bottom: 12px;
+}
+.page-title { font-weight: 600; font-size: 13px; line-height: 1.5; }
+.page-url {
+  font-size: 11px; color: var(--muted); margin-top: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.state-msg { margin: 0; color: var(--muted); font-size: 13px; white-space: pre-wrap; }
+.state-msg.error { color: var(--err); }
+.progress { margin-top: 10px; }
+.progress .bar {
+  height: 4px; border-radius: 2px; background: var(--accent);
+  width: 0%; transition: width .2s ease;
+}
+.progress-label { display: block; margin-top: 4px; font-size: 11px; color: var(--muted); }
+.result { font-size: 14px; }
+.result ul { margin: 0; padding-left: 1.2em; }
+.result li { margin-bottom: 6px; }
+.result p { margin: 0 0 8px; }
