@@ -115,6 +115,8 @@ button.primary:disabled { cursor: default; box-shadow: none; opacity: .7; }
 @media (prefers-reduced-motion: reduce) {
   button.primary, .icon-btn { transition: none; }
   button.primary:hover:not(:disabled) { transform: none; }
+  /* 動きを止め、三点はそのまま表示する */
+  .dots i { animation: none; opacity: 1; }
 }
 
 #main { flex: 1 1 auto; overflow-y: auto; padding: 12px 14px; }
@@ -129,6 +131,21 @@ button.primary:disabled { cursor: default; box-shadow: none; opacity: .7; }
 }
 .state-msg { margin: 0; color: var(--muted); font-size: 13px; white-space: pre-wrap; }
 .state-msg.error { color: var(--err); }
+
+/* 処理中の三点リーダー。3つ分の幅は常に確保し、opacity だけ動かす。
+   animation-delay で遅らせると各点の周期がずれて増減がガタつくため、
+   同一の長さの中で出現位置だけを変えた3つのキーフレームを使う。 */
+.dots i {
+  font-style: normal;
+  opacity: 0;
+  animation: 1.6s linear infinite;
+}
+.dots i:nth-child(1) { animation-name: dot1; }
+.dots i:nth-child(2) { animation-name: dot2; }
+.dots i:nth-child(3) { animation-name: dot3; }
+@keyframes dot1 { 0%, 12% { opacity: 0; } 13%, 100% { opacity: 1; } }
+@keyframes dot2 { 0%, 37% { opacity: 0; } 38%, 100% { opacity: 1; } }
+@keyframes dot3 { 0%, 62% { opacity: 0; } 63%, 100% { opacity: 1; } }
 .progress { margin-top: 10px; }
 .progress .bar {
   height: 4px; border-radius: 2px; background: var(--accent);

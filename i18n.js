@@ -5,7 +5,6 @@ const STRINGS = {
   ja: {
     panelTitle: 'Web Page Summarizer - Local AI',
     run: '要約する',
-    running: '要約中…',
     openSettings: '設定を開く',
 
     hintIdle: '「要約する」を押すと、表示中のページを要約します。',
@@ -53,7 +52,6 @@ const STRINGS = {
   en: {
     panelTitle: 'Web Page Summarizer - Local AI',
     run: 'Summarize',
-    running: 'Summarizing…',
     openSettings: 'Open settings',
 
     hintIdle: 'Press Summarize to condense the page you are viewing.',
@@ -101,7 +99,6 @@ const STRINGS = {
   zh: {
     panelTitle: 'Web Page Summarizer - Local AI',
     run: '生成摘要',
-    running: '正在生成…',
     openSettings: '打开设置',
 
     hintIdle: '点击「生成摘要」，即可为当前页面生成摘要。',

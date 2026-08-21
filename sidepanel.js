@@ -69,25 +69,42 @@ function applyLanguage(lang) {
   uiLang = lang;
   document.documentElement.lang = lang;
   applyI18n(document, lang);
-  els.runLabel.textContent = t(lang, els.run.classList.contains('is-busy') ? 'running' : 'run');
+  els.runLabel.textContent = t(lang, 'run');
   const s = lastStatus ?? { key: 'hintIdle', kind: 'info' };
   setStatus(s.key, s.kind, s.params);
 }
 
-/** 実行中はスピナー＋ラベル変更で、ボタン自体に進行状態を出す */
+/** 実行中はボタンを無効化する。進行状態はステータス欄のテキストで示す。 */
 function setBusy(busy) {
   els.run.disabled = busy;
-  els.run.classList.toggle('is-busy', busy);
   els.run.setAttribute('aria-busy', busy ? 'true' : 'false');
-  els.runLabel.textContent = t(uiLang, busy ? 'running' : 'run');
 }
 
 // 表示中のメッセージ。言語が変わったら同じ内容で描き直す。
 let lastStatus = null;
 
+// 処理中を表すメッセージ。末尾の三点リーダーをアニメーションに差し替える。
+const PROGRESS_KEYS = new Set(['fetching', 'generating', 'preparingModel', 'merging']);
+
+/** 「…」を、順に現れる3つの点に置き換えた要素を作る */
+function ellipsisEl() {
+  const span = document.createElement('span');
+  span.className = 'dots';
+  span.setAttribute('aria-hidden', 'true');
+  for (let i = 0; i < 3; i++) span.append(Object.assign(document.createElement('i'), { textContent: '.' }));
+  return span;
+}
+
 function setStatus(key, kind = 'info', params) {
   lastStatus = { key, kind, params };
-  els.stateMsg.textContent = t(uiLang, key, params);
+  const text = t(uiLang, key, params);
+
+  if (PROGRESS_KEYS.has(key)) {
+    // 点の領域は常に確保されるので、増減しても文字幅は動かない
+    els.stateMsg.replaceChildren(text.replace(/[…]+$/, ''), ellipsisEl());
+  } else {
+    els.stateMsg.textContent = text;
+  }
   els.stateMsg.classList.toggle('error', kind === 'error');
   els.state.hidden = false;
 }
