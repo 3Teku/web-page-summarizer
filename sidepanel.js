@@ -283,13 +283,30 @@ async function run() {
     }
 
     const tab = await getActiveTab();
-    if (!tab || !/^https?:/.test(tab.url ?? '')) {
+    if (!tab) {
+      setStatus('対象のタブが見つかりませんでした。', 'error');
+      return;
+    }
+    // activeTab 未付与だと tab.url は取れない。取れた場合だけ事前に弾く。
+    if (tab.url && !/^https?:/.test(tab.url)) {
       setStatus('通常のWebページ(http / https)を開いた状態で実行してください。', 'error');
       return;
     }
 
     setStatus('ページ本文を取得中…');
-    const page = await fetchPageContent(tab);
+    let page;
+    try {
+      page = await fetchPageContent(tab);
+    } catch (err) {
+      console.warn('[web-page-summarizer] executeScript:', err);
+      setStatus(
+        'このページの内容を読み取れませんでした。\n' +
+          '・ツールバーのアイコンをクリックしてからもう一度お試しください\n' +
+          '・chrome:// やウェブストアのページでは利用できません',
+        'error',
+      );
+      return;
+    }
 
     if (!page || page.text.length < 200) {
       setStatus('要約できるだけの本文が見つかりませんでした。', 'error');
