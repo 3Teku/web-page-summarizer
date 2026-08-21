@@ -189,6 +189,28 @@ function extractPageContent() {
   };
 }
 
+// サイドパネルを action クリックで開く経路では activeTab が付与されないため、
+// ページ読み取りはオプション権限 <all_urls> で担保する。
+const HOST_ACCESS = { origins: ['<all_urls>'] };
+
+async function hasHostAccess() {
+  try {
+    return await chrome.permissions.contains(HOST_ACCESS);
+  } catch {
+    return false;
+  }
+}
+
+/** ユーザー操作中にのみ呼べる。許可済みならダイアログは出ずに true が返る。 */
+async function requestHostAccess() {
+  try {
+    return await chrome.permissions.request(HOST_ACCESS);
+  } catch (err) {
+    console.warn('[web-page-summarizer] permissions.request:', err);
+    return false;
+  }
+}
+
 async function getActiveTab() {
   const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
   return tab ?? null;
@@ -299,10 +321,13 @@ async function run() {
       page = await fetchPageContent(tab);
     } catch (err) {
       console.warn('[web-page-summarizer] executeScript:', err);
+      const granted = await hasHostAccess();
       setStatus(
-        'このページの内容を読み取れませんでした。\n' +
-          '・ツールバーのアイコンをクリックしてからもう一度お試しください\n' +
-          '・chrome:// やウェブストアのページでは利用できません',
+        granted
+          ? 'このページの内容は読み取れません。\n' +
+              'chrome:// やウェブストアなど、拡張機能が動作できないページです。'
+          : 'このページの内容を読み取れませんでした。\n' +
+              '「要約する」を押して、ページの読み取りを許可してください。',
         'error',
       );
       return;
@@ -359,7 +384,11 @@ async function run() {
 // --- 起動時チェック --------------------------------------------------------
 
 (async function init() {
-  els.run.addEventListener('click', run);
+  // permissions.request() はユーザー操作中に呼ぶ必要があるため、
+  // await を挟まずクリックハンドラの先頭で発行する。
+  els.run.addEventListener('click', () => {
+    requestHostAccess().then(run, run);
+  });
   els.openOptions.addEventListener('click', () => chrome.runtime.openOptionsPage());
 
   if (!SummarizerAPI) {
@@ -388,9 +417,12 @@ async function run() {
     setStatus('AIの状態を確認できませんでした。とりあえず実行してみてください。');
   }
 
-  // パネルを開いた時点で自動要約（設定でオフにできる）
+  // パネルを開いた時点で自動要約（設定でオフにできる）。
+  // 権限が未許可のうちは許可ダイアログをユーザー操作なしに出せないので自動実行しない。
   if (usable) {
     const { autoRun } = await loadSettings();
-    if (autoRun) run();
+    if (!autoRun) return;
+    if (await hasHostAccess()) run();
+    else setStatus('「要約する」を押すと、ページの読み取り許可を確認したうえで要約します。');
   }
 })();
