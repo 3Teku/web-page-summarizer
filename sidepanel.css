@@ -4,8 +4,10 @@
   --muted: #6b7280;
   --line: #e5e7eb;
   --accent: #2563eb;
-  --accent-hi: #3b82f6;
-  --accent-lo: #1d4ed8;
+  /* ボタン専用。白文字で AA(4.5:1) を満たす範囲に収めた青 */
+  --btn-hi: #2f6fe0;      /* 白文字とのコントラスト 4.70:1 */
+  --btn-lo: #1d4ed8;      /* 6.70:1 */
+  --btn-hover-lo: #1a43bd; /* 8.13:1 */
   --accent-fg: #ffffff;
   --card: #f7f8fa;
   --err: #b42318;
@@ -20,9 +22,11 @@
     --muted: #9aa0a6;
     --line: #2e3035;
     --accent: #4c8dff;
-    --accent-hi: #6ba1ff;
-    --accent-lo: #3a7af0;
-    --accent-fg: #0a1020;
+    /* ボタンはライトと同じ濃さを保つ。明るい青地に白文字だと 3.2:1 で不足するため */
+    --btn-hi: #2f6fe0;
+    --btn-lo: #1d4ed8;
+    --btn-hover-lo: #1a43bd;
+    --accent-fg: #ffffff;
     --card: #1f2126;
     --err: #ff8a80;
     --ring: #7fb0ff;
@@ -63,7 +67,7 @@ button.primary {
   letter-spacing: .01em;
   color: var(--accent-fg);
   /* 単色ベタ塗りより、わずかな縦グラデで押せる面に見せる */
-  background: linear-gradient(180deg, var(--accent-hi), var(--accent));
+  background: linear-gradient(180deg, var(--btn-hi), var(--btn-lo));
   border: 0;
   border-radius: 8px;
   box-shadow: var(--shadow);
@@ -71,12 +75,12 @@ button.primary {
   transition: box-shadow .16s ease, transform .16s ease, background .16s ease;
 }
 button.primary:hover:not(:disabled) {
-  background: linear-gradient(180deg, var(--accent), var(--accent-lo));
+  background: linear-gradient(180deg, var(--btn-lo), var(--btn-hover-lo));
   box-shadow: var(--shadow-hover);
   transform: translateY(-1px);
 }
 button.primary:active:not(:disabled) {
-  background: linear-gradient(180deg, var(--accent-lo), var(--accent-lo));
+  background: linear-gradient(180deg, var(--btn-hover-lo), var(--btn-hover-lo));
   box-shadow: var(--shadow);
   transform: translateY(0);
 }

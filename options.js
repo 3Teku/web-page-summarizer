@@ -1,8 +1,7 @@
-import { loadSettings, saveSettings, browserLanguage } from './settings.js';
-import { applyI18n, t, LANGUAGE_LABELS } from './i18n.js';
+import { loadSettings, saveSettings } from './settings.js';
+import { applyI18n, t } from './i18n.js';
 
 const language = document.getElementById('language');
-const languageHint = document.getElementById('languageHint');
 const length = document.getElementById('length');
 const type = document.getElementById('type');
 const autoRun = document.getElementById('autoRun');
@@ -24,9 +23,6 @@ function render(lang) {
   document.documentElement.lang = lang;
   document.title = t(lang, 'settingsTitle');
   applyI18n(document, lang);
-  languageHint.textContent = t(lang, 'languageHint', {
-    browser: LANGUAGE_LABELS[browserLanguage()],
-  });
 }
 
 const settings = await loadSettings();
