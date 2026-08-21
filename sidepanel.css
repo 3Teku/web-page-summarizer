@@ -82,22 +82,12 @@ button.primary:active:not(:disabled) {
 }
 button.primary:disabled { cursor: default; box-shadow: none; opacity: .7; }
 
-/* ボタン内アイコン。処理中はスピナーに差し替える */
+/* ボタン内アイコン */
 .btn-icon {
   display: inline-flex;
   width: 14px; height: 14px;
   flex: 0 0 auto;
 }
-button.primary.is-busy .btn-icon svg { display: none; }
-button.primary.is-busy .btn-icon::after {
-  content: '';
-  width: 14px; height: 14px;
-  border: 2px solid currentColor;
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin .7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
 
 .icon-btn {
   margin-left: auto;
@@ -125,7 +115,6 @@ button.primary.is-busy .btn-icon::after {
 @media (prefers-reduced-motion: reduce) {
   button.primary, .icon-btn { transition: none; }
   button.primary:hover:not(:disabled) { transform: none; }
-  button.primary.is-busy .btn-icon::after { animation-duration: 2s; }
 }
 
 #main { flex: 1 1 auto; overflow-y: auto; padding: 12px 14px; }
