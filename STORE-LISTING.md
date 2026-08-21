@@ -56,7 +56,10 @@ OpenAIやGeminiのAPIキーを用意する必要はありません。アカウ�
 
 ## カテゴリ
 
-生産性向上（Productivity）
+ツール（Tools）
+
+※ 旧「生産性向上（Productivity）」は廃止済み。ページを読み取って処理する
+汎用ユーティリティなので Tools が最も近い。
 
 ## 言語
 
