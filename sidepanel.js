@@ -70,8 +70,13 @@ function applyLanguage(lang) {
   document.documentElement.lang = lang;
   applyI18n(document, lang);
   els.runLabel.textContent = t(lang, 'run');
+
+  // 文言を訳し直すだけで、表示/非表示は変えない。
+  // （要約の完了後に隠したステータス欄が、言語切替で復活しないように）
+  const wasHidden = els.state.hidden;
   const s = lastStatus ?? { key: 'hintIdle', kind: 'info' };
   setStatus(s.key, s.kind, s.params);
+  els.state.hidden = wasHidden;
 }
 
 /** 実行中はボタンを無効化する。進行状態はステータス欄のテキストで示す。 */
@@ -347,6 +352,8 @@ async function summarizeLongText(summarizer, text, context) {
 async function run() {
   setBusy(true);
   els.result.hidden = true;
+  // 前回のページ情報を残さない。読み取りに成功した時点で出し直す。
+  els.pageMeta.hidden = true;
   hideProgress();
 
   try {
