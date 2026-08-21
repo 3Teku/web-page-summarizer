@@ -36,8 +36,7 @@ it and it works. It keeps working offline once the model has been downloaded.
 2. The side panel opens and the summary appears automatically
 
 ■ Make it yours
-- Language: English, Japanese, or Simplified Chinese — for both the summary and
-  the interface
+- Language: English or Japanese — for both the summary and the interface
 - Length: short, medium, or long
 - Format: key points, TL;DR, teaser, or headline
 - Turn off automatic summarizing if you prefer to press the button yourself

@@ -94,54 +94,9 @@ const STRINGS = {
     allSitesHint: 'By default only the page you opened from the toolbar icon is read. Turning this on lets the extension read every site you visit, so you do not have to click the icon again. Chrome will ask you to approve this.',
   },
 
-  zh: {
-    run: '生成摘要',
-    openSettings: '打开设置',
-
-    hintIdle: '点击「生成摘要」，即可为当前页面生成摘要。',
-    ready: '准备就绪，请点击「生成摘要」。',
-    needsDownload: '首次使用需要下载约2GB的AI模型。点击「生成摘要」即可开始。',
-    noApi: '未找到Chrome内置AI（Summarizer API）。\n请升级到Chrome 138或更高版本，或启用 chrome://flags/#summarization-api-for-gemini-nano。',
-    unavailable: '此设备无法使用内置AI模型（不满足运行要求）。',
-    unknownState: '无法确认AI状态，可以先尝试运行。',
-
-    noTab: '未找到目标标签页。',
-    notWebPage: '请在普通网页（http / https）中使用。',
-    fetching: '正在读取页面正文…',
-    generating: '正在生成摘要…',
-    preparingModel: '正在准备AI模型，首次运行可能需要几分钟…',
-    downloading: '正在下载AI模型… {percent}%',
-    chunking: '内容较长，正在分段摘要…（{current}/{total}）',
-    merging: '正在合并分段结果…',
-    tooShort: '未找到足够的正文内容。',
-    cannotReadPage: '无法读取此页面。\n扩展程序无法在 chrome:// 页面或Chrome应用商店中运行。',
-    cannotReadYet: '无法读取此页面的内容。\n・再次点击工具栏图标即可读取\n・或在设置中启用「切换标签页后仍可使用」，无需再次点击',
-    failed: '摘要生成失败：{message}',
-
-    settingsTitle: 'Web Page Summarizer - Local AI 设置',
-    saved: '已保存',
-    languageLabel: '界面与摘要语言',
-    languageHint: '默认使用浏览器语言。摘要正文和本界面都会随之切换。',
-    lengthLabel: '摘要长度',
-    lengthHint: '每次生成的内容量。',
-    lengthShort: '简短',
-    lengthMedium: '适中',
-    lengthLong: '详细',
-    typeLabel: '摘要形式',
-    typeHint: '任何形式都会整理为以名词性短语结尾。',
-    typeKeyPoints: '要点（分条列出）',
-    typeTldr: 'TL;DR（简要总结）',
-    typeTeaser: '导语（引起兴趣）',
-    typeHeadline: '标题（一行）',
-    otherHeading: '其他设置',
-    autoRunLabel: '打开面板时自动生成摘要',
-    autoRunHint: '关闭后，仅在点击左上角「生成摘要」时才会生成。',
-    allSitesLabel: '切换标签页后仍可使用',
-    allSitesHint: '默认只读取通过工具栏图标打开的页面。启用后，扩展可以读取你访问的所有网站，无需再次点击图标。启用时Chrome会请求授权。',
-  },
 };
 
-export const LANGUAGE_LABELS = { en: 'English', ja: '日本語', zh: '中文（简体）' };
+export const LANGUAGE_LABELS = { en: 'English', ja: '日本語' };
 
 /** 文言を取得する。{name} 形式のプレースホルダを params で置換する。 */
 export function t(lang, key, params) {

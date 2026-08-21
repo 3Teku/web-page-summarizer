@@ -48,16 +48,6 @@ const SUMMARY_STYLE = {
     'Example: "They added a new feature, so performance improved."',
     '  -> "Performance gains from the company\'s new feature"',
   ].join('\n'),
-  zh: [
-    '这是网页的正文，请用简体中文进行摘要。',
-    '文体规则：',
-    '- 每一条以名词性短语结尾，不要用完整句子',
-    '- 必须写出主语，不要省略「谁」「什么」',
-    '- 保留「因此」「另一方面」等连接词，体现各条之间的关系',
-    '- 不要写前言、感想或「本文介绍了」之类的说明',
-    '示例：「由于新增了功能，处理速度提升了。」',
-    '  →「该公司新增功能带来的处理速度提升」',
-  ].join('\n'),
 };
 
 // --- UI ヘルパー -----------------------------------------------------------
@@ -133,9 +123,6 @@ const BULLET_RE = /^(?:[-*・•]\s*|\d+[.)]\s+)/;
 // 「〜しました」など動詞の語尾は意味を壊すので触らず、プロンプト側の指示に任せる。
 const COPULA_TAIL = /(?:という(?:こと|もの)|と(?:なって|なり)(?:います|ました|いる)|が(?:あります|ある)|(?:して)?(?:います|いる)|です|でした|である|だ)$/;
 
-// 中国語で末尾から落としても意味が変わらない語尾
-const ZH_COPULA_TAIL = /(?:了|的|是|存在|具有)$/;
-
 /** 行頭の記号・強調記法・句点を落とし、簡潔な名詞止めに整える */
 function tidyLine(line, lang) {
   let out = line
@@ -146,9 +133,8 @@ function tidyLine(line, lang) {
 
   // 末尾の語尾は1回だけ削る（「〜の追加です」→「〜の追加」）。英語は語尾処理をしない。
   if (lang === 'ja') out = out.replace(COPULA_TAIL, '');
-  else if (lang === 'zh') out = out.replace(ZH_COPULA_TAIL, '');
 
-  return out.replace(/[、,，]$/, '').trim();
+  return out.replace(/[、,]$/, '').trim();
 }
 
 /** 要約テキストを DOM として描画する（innerHTML は使わない） */
@@ -166,9 +152,9 @@ function renderSummary(text, lang) {
     }
     els.result.append(ul);
   } else {
-    // 日本語・中国語は段落でも文単位に割る（英語は文末ピリオドで割ると誤爆するのでそのまま）
+    // 日本語は段落でも文単位に割る（英語は文末ピリオドで割ると誤爆するのでそのまま）
     for (const line of lines) {
-      const sentences = lang === 'en' ? [line] : line.split(/(?<=[。．！？])/);
+      const sentences = lang === 'ja' ? line.split(/(?<=[。．！？])/) : [line];
       for (const sentence of sentences) {
         const cleaned = tidyLine(sentence, lang);
         if (!cleaned) continue;

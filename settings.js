@@ -1,12 +1,12 @@
 // サイドパネルと設定画面で共有する設定の読み書き
 
-export const LANGUAGES = ['en', 'ja', 'zh'];
+export const LANGUAGES = ['en', 'ja'];
 
-/** ブラウザのUI言語から要約言語の既定値を決める（対応外は英語） */
+/** ブラウザのUI言語から要約言語の既定値を決める（対応外は英語）
+ *  Summarizer API の対応出力言語は en / ja / es / de / fr。zh は非対応。 */
 export function browserLanguage() {
   const ui = (chrome.i18n?.getUILanguage?.() || navigator.language || 'en').toLowerCase();
   if (ui.startsWith('ja')) return 'ja';
-  if (ui.startsWith('zh')) return 'zh'; // zh-CN / zh-TW とも簡体字でまとめる
   return 'en';
 }
 
