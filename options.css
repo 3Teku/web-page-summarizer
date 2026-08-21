@@ -32,6 +32,14 @@ h1 {
   font-weight: 650;
   border-bottom: 1px solid var(--line);
 }
+h2 {
+  margin: 28px 0 14px;
+  padding-bottom: 8px;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+}
 .field { margin-bottom: 18px; }
 .field label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 600; }
 select {

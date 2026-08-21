@@ -1,4 +1,5 @@
 import { loadSettings, saveSettings, browserLanguage } from './settings.js';
+import { applyI18n, t, LANGUAGE_LABELS } from './i18n.js';
 
 const language = document.getElementById('language');
 const languageHint = document.getElementById('languageHint');
@@ -11,13 +12,21 @@ const saved = document.getElementById('saved');
 // 全サイトの読み取りはオプション権限。チェックの操作でその場で許可／取り消しする。
 const HOST_ACCESS = { origins: ['<all_urls>'] };
 
-const LANGUAGE_LABELS = { en: 'English', ja: '日本語', zh: '中文（简体）' };
-
 let savedTimer = null;
 function flashSaved() {
   saved.hidden = false;
   clearTimeout(savedTimer);
   savedTimer = setTimeout(() => { saved.hidden = true; }, 1500);
+}
+
+/** UI文言を選択中の言語で描き直す */
+function render(lang) {
+  document.documentElement.lang = lang;
+  document.title = t(lang, 'settingsTitle');
+  applyI18n(document, lang);
+  languageHint.textContent = t(lang, 'languageHint', {
+    browser: LANGUAGE_LABELS[browserLanguage()],
+  });
 }
 
 const settings = await loadSettings();
@@ -26,13 +35,12 @@ length.value = settings.length;
 type.value = settings.type;
 autoRun.checked = settings.autoRun;
 allSites.checked = await chrome.permissions.contains(HOST_ACCESS).catch(() => false);
-
-languageHint.textContent =
-  `既定はブラウザの言語（${LANGUAGE_LABELS[browserLanguage()]}）です。UIの表示言語ではなく、要約文の言語が変わります。`;
+render(settings.language);
 
 // 変更即保存（保存ボタンなし）
 language.addEventListener('change', async () => {
   await saveSettings({ language: language.value });
+  render(language.value);
   flashSaved();
 });
 length.addEventListener('change', async () => {

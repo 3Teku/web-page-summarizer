@@ -5,9 +5,11 @@
 // ---------------------------------------------------------------------------
 
 import { loadSettings } from './settings.js';
+import { applyI18n, t } from './i18n.js';
 
 const els = {
   run: document.getElementById('run'),
+  runLabel: document.getElementById('runLabel'),
   openOptions: document.getElementById('openOptions'),
   state: document.getElementById('state'),
   stateMsg: document.getElementById('stateMsg'),
@@ -60,8 +62,32 @@ const SUMMARY_STYLE = {
 
 // --- UI ヘルパー -----------------------------------------------------------
 
-function setStatus(msg, kind = 'info') {
-  els.stateMsg.textContent = msg;
+// UI文言に使う言語。設定の読み込み後と、設定変更時に更新する。
+let uiLang = 'en';
+
+function applyLanguage(lang) {
+  uiLang = lang;
+  document.documentElement.lang = lang;
+  applyI18n(document, lang);
+  els.runLabel.textContent = t(lang, els.run.classList.contains('is-busy') ? 'running' : 'run');
+  const s = lastStatus ?? { key: 'hintIdle', kind: 'info' };
+  setStatus(s.key, s.kind, s.params);
+}
+
+/** 実行中はスピナー＋ラベル変更で、ボタン自体に進行状態を出す */
+function setBusy(busy) {
+  els.run.disabled = busy;
+  els.run.classList.toggle('is-busy', busy);
+  els.run.setAttribute('aria-busy', busy ? 'true' : 'false');
+  els.runLabel.textContent = t(uiLang, busy ? 'running' : 'run');
+}
+
+// 表示中のメッセージ。言語が変わったら同じ内容で描き直す。
+let lastStatus = null;
+
+function setStatus(key, kind = 'info', params) {
+  lastStatus = { key, kind, params };
+  els.stateMsg.textContent = t(uiLang, key, params);
   els.stateMsg.classList.toggle('error', kind === 'error');
   els.state.hidden = false;
 }
@@ -90,17 +116,17 @@ const ZH_COPULA_TAIL = /(?:了|的|是|存在|具有)$/;
 
 /** 行頭の記号・強調記法・句点を落とし、簡潔な名詞止めに整える */
 function tidyLine(line, lang) {
-  let t = line
+  let out = line
     .replace(BULLET_RE, '')
     .replace(/\*\*/g, '')
     .trim()
     .replace(/[。．.]+$/, '');
 
   // 末尾の語尾は1回だけ削る（「〜の追加です」→「〜の追加」）。英語は語尾処理をしない。
-  if (lang === 'ja') t = t.replace(COPULA_TAIL, '');
-  else if (lang === 'zh') t = t.replace(ZH_COPULA_TAIL, '');
+  if (lang === 'ja') out = out.replace(COPULA_TAIL, '');
+  else if (lang === 'zh') out = out.replace(ZH_COPULA_TAIL, '');
 
-  return t.replace(/[、,，]$/, '').trim();
+  return out.replace(/[、,，]$/, '').trim();
 }
 
 /** 要約テキストを DOM として描画する（innerHTML は使わない） */
@@ -122,10 +148,10 @@ function renderSummary(text, lang) {
     for (const line of lines) {
       const sentences = lang === 'en' ? [line] : line.split(/(?<=[。．！？])/);
       for (const sentence of sentences) {
-        const t = tidyLine(sentence, lang);
-        if (!t) continue;
+        const cleaned = tidyLine(sentence, lang);
+        if (!cleaned) continue;
         const p = document.createElement('p');
-        p.textContent = t;
+        p.textContent = cleaned;
         els.result.append(p);
       }
     }
@@ -189,8 +215,8 @@ function extractPageContent() {
   };
 }
 
-// サイドパネルを action クリックで開く経路では activeTab が付与されないため、
-// ページ読み取りはオプション権限 <all_urls> で担保する。
+// 通常は action クリックで付与される activeTab で読み取る。タブを切り替えても
+// 使えるようにしたい場合のみ、設定画面からこのオプション権限を許可してもらう。
 const HOST_ACCESS = { origins: ['<all_urls>'] };
 
 async function hasHostAccess() {
@@ -223,11 +249,11 @@ async function createSummarizer(options) {
       const loaded = e.loaded ?? 0;
       if (loaded >= 1) {
         hideProgress();
-        setStatus('要約を生成中…');
+        setStatus('generating');
         return;
       }
-      setStatus('AIモデルを準備しています。初回は数分かかることがあります…');
-      showProgress(loaded, `AIモデルをダウンロード中… ${Math.round(loaded * 100)}%`);
+      setStatus('preparingModel');
+      showProgress(loaded, t(uiLang, 'downloading', { percent: Math.round(loaded * 100) }));
     });
   };
 
@@ -271,61 +297,48 @@ async function summarizeLongText(summarizer, text, context) {
 
   const partials = [];
   for (let i = 0; i < chunks.length; i++) {
-    showProgress((i + 1) / (chunks.length + 1), `長文のため分割要約中… (${i + 1}/${chunks.length})`);
+    showProgress((i + 1) / (chunks.length + 1), t(uiLang, 'chunking', { current: i + 1, total: chunks.length }));
     partials.push(await summarizer.summarize(chunks[i], { context }));
   }
-  showProgress(1, '分割結果を統合中…');
+  showProgress(1, t(uiLang, 'merging'));
   return await summarizer.summarize(partials.join('\n'), { context });
 }
 
 async function run() {
-  els.run.disabled = true;
+  setBusy(true);
   els.result.hidden = true;
   hideProgress();
 
   try {
     if (!SummarizerAPI) {
-      setStatus(
-        'このChromeでは内蔵AI(Summarizer API)が使えません。\n' +
-          '・Chrome 138以降か確認してください\n' +
-          '・chrome://flags/#summarization-api-for-gemini-nano を Enabled にして再起動すると使える場合があります',
-        'error',
-      );
+      setStatus('noApi', 'error');
       return;
     }
 
     const tab = await getActiveTab();
     if (!tab) {
-      setStatus('対象のタブが見つかりませんでした。', 'error');
+      setStatus('noTab', 'error');
       return;
     }
     // activeTab 未付与だと tab.url は取れない。取れた場合だけ事前に弾く。
     if (tab.url && !/^https?:/.test(tab.url)) {
-      setStatus('通常のWebページ(http / https)を開いた状態で実行してください。', 'error');
+      setStatus('notWebPage', 'error');
       return;
     }
 
-    setStatus('ページ本文を取得中…');
+    setStatus('fetching');
     let page;
     try {
       page = await fetchPageContent(tab);
     } catch (err) {
       console.warn('[web-page-summarizer] executeScript:', err);
       const granted = await hasHostAccess();
-      setStatus(
-        granted
-          ? 'このページの内容は読み取れません。\n' +
-              'chrome:// やウェブストアなど、拡張機能が動作できないページです。'
-          : 'このページの内容を読み取れませんでした。\n' +
-              '・ツールバーのアイコンをクリックし直すと読み取れます\n' +
-              '・設定画面で「すべてのサイトで許可」を有効にすると、クリックし直さずに使えます',
-        'error',
-      );
+      setStatus(granted ? 'cannotReadPage' : 'cannotReadYet', 'error');
       return;
     }
 
     if (!page || page.text.length < 200) {
-      setStatus('要約できるだけの本文が見つかりませんでした。', 'error');
+      setStatus('tooShort', 'error');
       return;
     }
 
@@ -335,11 +348,11 @@ async function run() {
 
     const availability = await SummarizerAPI.availability();
     if (availability === 'unavailable') {
-      setStatus('この端末では内蔵AIモデルを利用できません（対応要件を満たしていません）。', 'error');
+      setStatus('unavailable', 'error');
       return;
     }
     // 進捗バーは実際に downloadprogress が発火したときだけ出す（モデル準備済みなら出さない）
-    setStatus('要約を生成中…');
+    setStatus('generating');
 
     const settings = await loadSettings();
     const style = SUMMARY_STYLE[settings.language] ?? SUMMARY_STYLE.en;
@@ -352,7 +365,7 @@ async function run() {
     });
 
     hideProgress();
-    setStatus('要約を生成中…');
+    setStatus('generating');
     const summary = await summarizeLongText(
       summarizer,
       page.text,
@@ -366,9 +379,9 @@ async function run() {
   } catch (err) {
     console.error('[page-summarizer]', err);
     hideProgress();
-    setStatus('要約に失敗しました: ' + (err?.message ?? String(err)), 'error');
+    setStatus('failed', 'error', { message: err?.message ?? String(err) });
   } finally {
-    els.run.disabled = false;
+    setBusy(false);
   }
 }
 
@@ -378,12 +391,19 @@ async function run() {
   els.run.addEventListener('click', run);
   els.openOptions.addEventListener('click', () => chrome.runtime.openOptionsPage());
 
+  // 先に言語を確定させてから、以降の文言を出す
+  const initial = await loadSettings();
+  applyLanguage(initial.language);
+
+  // パネルを開いたまま設定画面で言語を変えた場合にも追従させる
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'sync' && changes.language?.newValue) {
+      applyLanguage(changes.language.newValue);
+    }
+  });
+
   if (!SummarizerAPI) {
-    setStatus(
-      'このChromeでは内蔵AI(Summarizer API)が見つかりません。\n' +
-        'Chrome 138以降にするか、chrome://flags/#summarization-api-for-gemini-nano を Enabled にしてください。',
-      'error',
-    );
+    setStatus('noApi', 'error');
     els.run.disabled = true;
     return;
   }
@@ -393,21 +413,18 @@ async function run() {
     const availability = await SummarizerAPI.availability();
     if (availability === 'unavailable') {
       usable = false;
-      setStatus('この端末では内蔵AIモデルを利用できません（対応要件を満たしていません）。', 'error');
+      setStatus('unavailable', 'error');
       els.run.disabled = true;
     } else if (availability === 'available') {
-      setStatus('準備完了です。「要約する」を押してください。');
+      setStatus('ready');
     } else {
-      setStatus('初回実行時にAIモデル(約2GB)のダウンロードが必要です。「要約する」を押すと開始します。');
+      setStatus('needsDownload');
     }
   } catch {
-    setStatus('AIの状態を確認できませんでした。とりあえず実行してみてください。');
+    setStatus('unknownState');
   }
 
   // パネルを開いた時点で自動要約（設定でオフにできる）。
   // アイコンのクリックで activeTab が付与されているので、そのまま読み取れる。
-  if (usable) {
-    const { autoRun } = await loadSettings();
-    if (autoRun) run();
-  }
+  if (usable && initial.autoRun) run();
 })();

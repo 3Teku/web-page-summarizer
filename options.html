@@ -2,35 +2,15 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <title>Web Page Summarizer - Local AI の設定</title>
+  <title>Web Page Summarizer - Local AI</title>
   <link rel="stylesheet" href="options.css" />
 </head>
 <body>
-  <h1>Web Page Summarizer - Local AI の設定</h1>
+  <h1 id="title" data-i18n="settingsTitle">Web Page Summarizer - Local AI の設定</h1>
 
   <form id="form">
     <div class="field">
-      <label class="check">
-        <input type="checkbox" id="autoRun" />
-        <span>パネルを開いたら自動で要約する</span>
-      </label>
-      <p class="hint">オフにすると、左上の「要約する」を押したときだけ要約します。</p>
-    </div>
-
-    <div class="field">
-      <label class="check">
-        <input type="checkbox" id="allSites" />
-        <span>すべてのサイトで許可する</span>
-      </label>
-      <p class="hint">
-        通常は、ツールバーのアイコンをクリックして開いたページだけを読み取ります。
-        これを有効にすると、タブを切り替えた後もアイコンを押し直さずに要約できます。
-        有効化にはChromeの権限ダイアログでの許可が必要です。
-      </p>
-    </div>
-
-    <div class="field">
-      <label for="language">要約の言語</label>
+      <label for="language" data-i18n="languageLabel">表示と要約の言語</label>
       <select id="language">
         <option value="en">English</option>
         <option value="ja">日本語</option>
@@ -40,28 +20,46 @@
     </div>
 
     <div class="field">
-      <label for="length">要約の長さ</label>
+      <label for="length" data-i18n="lengthLabel">要約の長さ</label>
       <select id="length">
-        <option value="short">短い</option>
-        <option value="medium">ふつう</option>
-        <option value="long">長い</option>
+        <option value="short" data-i18n="lengthShort">短い</option>
+        <option value="medium" data-i18n="lengthMedium">ふつう</option>
+        <option value="long" data-i18n="lengthLong">長い</option>
       </select>
-      <p class="hint">1回の要約で出力する分量。</p>
+      <p class="hint" data-i18n="lengthHint">1回の要約で出力する分量。</p>
     </div>
 
     <div class="field">
-      <label for="type">要約の形式</label>
+      <label for="type" data-i18n="typeLabel">要約の形式</label>
       <select id="type">
-        <option value="key-points">箇条書き（要点）</option>
-        <option value="tldr">TL;DR（短いまとめ）</option>
-        <option value="teaser">ティザー（興味を引く導入）</option>
-        <option value="headline">見出し（1行）</option>
+        <option value="key-points" data-i18n="typeKeyPoints">箇条書き（要点）</option>
+        <option value="tldr" data-i18n="typeTldr">TL;DR（短いまとめ）</option>
+        <option value="teaser" data-i18n="typeTeaser">ティザー（興味を引く導入）</option>
+        <option value="headline" data-i18n="typeHeadline">見出し（1行）</option>
       </select>
-      <p class="hint">いずれの形式でも、文末は体言止めに整形されます。</p>
+      <p class="hint" data-i18n="typeHint">いずれの形式でも、文末は名詞で終わる形に整形されます。</p>
+    </div>
+
+    <h2 data-i18n="otherHeading">その他の設定</h2>
+
+    <div class="field">
+      <label class="check">
+        <input type="checkbox" id="autoRun" />
+        <span data-i18n="autoRunLabel">パネルを開いたら自動で要約する</span>
+      </label>
+      <p class="hint" data-i18n="autoRunHint">オフにすると、左上の「要約する」を押したときだけ要約します。</p>
+    </div>
+
+    <div class="field">
+      <label class="check">
+        <input type="checkbox" id="allSites" />
+        <span data-i18n="allSitesLabel">タブを切り替えても要約できるようにする</span>
+      </label>
+      <p class="hint" data-i18n="allSitesHint"></p>
     </div>
   </form>
 
-  <p class="saved" id="saved" hidden>保存しました</p>
+  <p class="saved" id="saved" data-i18n="saved" hidden>保存しました</p>
 
   <script src="options.js" type="module"></script>
 </body>

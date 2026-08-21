@@ -8,8 +8,17 @@
 </head>
 <body>
   <header class="head">
-    <button id="run" class="primary">要約する</button>
-    <button id="openOptions" class="icon-btn" title="設定を開く" aria-label="設定を開く">
+    <button id="run" class="primary" type="button">
+      <span class="btn-icon" aria-hidden="true">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor"
+             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3.5h8M2 7h6M2 10.5h4" />
+          <path d="M12.2 8.4l.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7z" fill="currentColor" stroke="none" />
+        </svg>
+      </span>
+      <span class="btn-label" id="runLabel">要約する</span>
+    </button>
+    <button id="openOptions" class="icon-btn" type="button" data-i18n-title="openSettings" title="設定を開く" aria-label="設定を開く">
       <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
         <path fill="currentColor" d="M12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7zm7.4-2.6.1-.9-.1-.9 1.9-1.5a.5.5 0 0 0 .1-.6l-1.8-3.1a.5.5 0 0 0-.6-.2l-2.2.9a7 7 0 0 0-1.6-.9l-.3-2.4a.5.5 0 0 0-.5-.4h-3.6a.5.5 0 0 0-.5.4l-.3 2.4c-.6.2-1.1.5-1.6.9l-2.2-.9a.5.5 0 0 0-.6.2L3.8 9a.5.5 0 0 0 .1.6l1.9 1.5-.1.9.1.9-1.9 1.5a.5.5 0 0 0-.1.6l1.8 3.1c.1.2.4.3.6.2l2.2-.9c.5.4 1 .7 1.6.9l.3 2.4c0 .2.3.4.5.4h3.6c.2 0 .5-.2.5-.4l.3-2.4c.6-.2 1.1-.5 1.6-.9l2.2.9c.2.1.5 0 .6-.2l1.8-3.1a.5.5 0 0 0-.1-.6z"/>
       </svg>
