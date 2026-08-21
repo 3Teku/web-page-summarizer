@@ -123,10 +123,16 @@ OpenAIやGeminiのAPIキーを用意する必要はありません。アカウ�
 ### プライバシーポリシーのURL
 
 ```
-（要記入）
+https://3teku.github.io/web-page-summarizer/
 ```
 
-`PRIVACY.md` の内容を公開ページとして設置し、そのURLを記入してください。
+`docs/index.html` を GitHub Pages で公開したもの。リポジトリを更新すると自動で反映されます。
+
+### ソースコード（審査で提示を求められた場合）
+
+```
+https://github.com/3Teku/web-page-summarizer
+```
 
 ---
 

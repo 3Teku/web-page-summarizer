@@ -62,7 +62,7 @@
 
 本ポリシーに関するお問い合わせは、以下までご連絡ください。
 
-- 連絡先: （メールアドレスを記入）
+- GitHub Issues: https://github.com/3Teku/web-page-summarizer/issues
 
 ## 変更について
 
