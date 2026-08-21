@@ -1,4 +1,4 @@
-# Web Page Summarizer（Chrome拡張）
+# Web Page Summarizer - Local AI（Chrome拡張）
 
 表示中のWebページの本文を抽出し、Chrome内蔵AI（Gemini Nano / Summarizer API）で要約して右のサイドパネルに表示します。
 外部サーバーへの送信は一切なく、要約はすべて端末内で完結します。
