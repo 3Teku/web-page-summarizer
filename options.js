@@ -57,11 +57,12 @@ autoRun.addEventListener('change', async () => {
 allSites.addEventListener('change', async () => {
   const want = allSites.checked;
   try {
-    const ok = want
+    // granted = 操作後に権限を持っているか。取り消し成功なら false になる。
+    const granted = want
       ? await chrome.permissions.request(HOST_ACCESS)
       : !(await chrome.permissions.remove(HOST_ACCESS));
-    allSites.checked = want ? ok : !ok;
-    if (allSites.checked === want) flashSaved();
+    allSites.checked = granted;
+    if (granted === want) flashSaved();
   } catch (err) {
     console.warn('[web-page-summarizer] permissions:', err);
     allSites.checked = !want;

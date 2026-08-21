@@ -289,36 +289,59 @@ async function createSummarizer(options) {
   }
 }
 
-/** 入力量の上限を超える場合は分割要約 → 統合要約を行う */
-async function summarizeLongText(summarizer, text, context) {
-  let usage = null;
-  let quota = null;
+// 統合を繰り返しても上限に収まらない場合に打ち切る回数
+const MAX_MERGE_ROUNDS = 3;
+
+/**
+ * text を入力量の上限に収まる断片へ分割する。1つで収まるなら [text] を返す。
+ * 下限を設けると、1文字あたりの消費が大きい言語で上限を超えるため設けない。
+ */
+async function splitToFit(summarizer, text, quota) {
+  if (!quota || !text) return [text];
+  let usage;
   try {
     usage = await summarizer.measureInputUsage(text);
+  } catch {
+    return [text]; // 計測非対応ならそのまま渡す
+  }
+  if (!usage || usage <= quota) return [text];
+
+  // 1文字あたりの消費量から安全な長さを求める（余裕を見て8割）
+  const perChar = usage / text.length;
+  const size = Math.max(1, Math.floor((quota / perChar) * 0.8));
+  const chunks = [];
+  for (let i = 0; i < text.length; i += size) chunks.push(text.slice(i, i + size));
+  return chunks;
+}
+
+/** 入力量の上限を超える場合は分割要約 → 統合要約を行う */
+async function summarizeLongText(summarizer, text, context) {
+  let quota = null;
+  try {
     quota = summarizer.inputQuota;
   } catch {
-    // 非対応ならそのまま投げる
     return await summarizer.summarize(text, { context });
   }
 
-  if (!quota || !usage || usage <= quota) {
-    return await summarizer.summarize(text, { context });
-  }
+  let parts = await splitToFit(summarizer, text, quota);
+  if (parts.length === 1) return await summarizer.summarize(text, { context });
 
-  // 文字数ベースでざっくり分割（安全側に 0.8 倍）
-  const chunkSize = Math.max(1000, Math.floor((text.length * quota) / usage * 0.8));
-  const chunks = [];
-  for (let i = 0; i < text.length; i += chunkSize) {
-    chunks.push(text.slice(i, i + chunkSize));
-  }
+  // 統合結果がまた上限を超えることがあるので、収まるまで段階的にまとめ直す
+  for (let round = 0; round < MAX_MERGE_ROUNDS; round++) {
+    const partials = [];
+    for (let i = 0; i < parts.length; i++) {
+      showProgress((i + 1) / (parts.length + 1), t(uiLang, 'chunking', { current: i + 1, total: parts.length }));
+      partials.push(await summarizer.summarize(parts[i], { context }));
+    }
 
-  const partials = [];
-  for (let i = 0; i < chunks.length; i++) {
-    showProgress((i + 1) / (chunks.length + 1), t(uiLang, 'chunking', { current: i + 1, total: chunks.length }));
-    partials.push(await summarizer.summarize(chunks[i], { context }));
+    const merged = partials.join('\n');
+    showProgress(1, t(uiLang, 'merging'));
+    const next = await splitToFit(summarizer, merged, quota);
+    if (next.length === 1) return await summarizer.summarize(merged, { context });
+    parts = next;
   }
-  showProgress(1, t(uiLang, 'merging'));
-  return await summarizer.summarize(partials.join('\n'), { context });
+  // 収束しなかった場合は、最後の分割要約の結合をそのまま返す
+  return parts.join('\n');
 }
 
 async function run() {
