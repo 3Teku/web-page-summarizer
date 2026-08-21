@@ -3,7 +3,6 @@
 
 const STRINGS = {
   ja: {
-    panelTitle: 'Web Page Summarizer - Local AI',
     run: '要約する',
     openSettings: '設定を開く',
 
@@ -50,7 +49,6 @@ const STRINGS = {
   },
 
   en: {
-    panelTitle: 'Web Page Summarizer - Local AI',
     run: 'Summarize',
     openSettings: 'Open settings',
 
@@ -97,7 +95,6 @@ const STRINGS = {
   },
 
   zh: {
-    panelTitle: 'Web Page Summarizer - Local AI',
     run: '生成摘要',
     openSettings: '打开设置',
 
