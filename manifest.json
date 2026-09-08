@@ -1,14 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "Web Page Summarizer - Local AI",
-  "version": "1.7.0",
-  "description": "表示中のWebページの本文を、Chrome内蔵AI(Gemini Nano)で要約して右サイドパネルに表示します。",
+  "name": "__MSG_extName__",
+  "version": "1.8.0",
+  "description": "__MSG_extDescription__",
+  "default_locale": "ja",
   "minimum_chrome_version": "138",
   "permissions": ["sidePanel", "scripting", "activeTab", "storage"],
   "optional_host_permissions": ["<all_urls>"],
   "background": { "service_worker": "background.js" },
   "action": {
-    "default_title": "Web Page Summarizer - Local AI を開く",
+    "default_title": "__MSG_actionTitle__",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",

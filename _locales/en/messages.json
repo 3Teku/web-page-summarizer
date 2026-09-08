@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "Web Page Summarizer - Local AI",
+    "description": "Extension name. Kept identical across locales."
+  },
+  "extDescription": {
+    "message": "Summarize the page you are reading with Chrome's built-in AI. Page content never leaves your device.",
+    "description": "Shown in the store and on the extensions page. Max 132 characters."
+  },
+  "actionTitle": {
+    "message": "Open Web Page Summarizer - Local AI",
+    "description": "Toolbar icon tooltip."
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "Web Page Summarizer - Local AI",
+    "description": "拡張機能の名前。言語によらず共通。"
+  },
+  "extDescription": {
+    "message": "表示中のWebページの本文を、Chrome内蔵AI(Gemini Nano)で要約して右サイドパネルに表示します。",
+    "description": "ストアと拡張機能一覧に表示される説明文。132文字以内。"
+  },
+  "actionTitle": {
+    "message": "Web Page Summarizer - Local AI を開く",
+    "description": "ツールバーアイコンのツールチップ。"
+  }
+}
